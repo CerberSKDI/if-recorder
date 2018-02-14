@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta charset="utf-8">
 	<title>Parchment</title>
 	<script src="lib/jquery.min.js"></script>
-	<script src="lib/jquery.browser.min.js"></script>
-	<script src="lib/jquery.json-2.2.min.js"></script>
 	<script src="lib/parchment.min.js"></script>
+	<script src="lib/jquery.browser.min.js"></script>
+	<script src="lib/jquery.json.min.js"></script>
 	<script src="lib/if-recorder.min.js"></script>
 	<script src="parchment.transcript.settings.js"></script>
-	<link rel="stylesheet" type="text/css" href="lib/parchment.min.css">
+	<link rel="stylesheet" href="lib/parchment.min.css">
 	<meta name="viewport" content="width=device-width,user-scalable=no">
 </head>
 <body>
 	<div id="about">
 		<h1>Parchment</h1>
-		<p>is an interpreter for Interactive Fiction, and now plays both Z-Machine and Glulx stories! <a href="http://parchment.googlecode.com">Find out more.</a></p>
+		<p>is an interpreter for Interactive Fiction. <a href="https://github.com/curiousdannii/parchment">Find out more.</a></p>
 		<noscript><p>Parchment requires Javascript. Please enable it in your browser.</p></noscript>
 	</div>
-	<div id="parchment"></div>
+	<div id="parchment" aria-live="polite" aria-atomic="false" aria-relevant="additions"></div>
 </body>
 </html>

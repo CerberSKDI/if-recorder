@@ -50,7 +50,12 @@ function display_transcript( $db, $session, $options ) {
 			$gameText = '';
 			$statusLineText = '';
 			if( $html ) {
-				$transcript .= '<span class="command" id="command-'.$snippet[ 'inputcount' ].'">'.htmlentities( $snippet[ 'input' ] ).'</span><br />';
+				if ( !empty( $snippet[ 'input' ] ) ) {
+					$transcript .= '<span class="command" id="command-'.$snippet[ 'inputcount' ].'">>'.htmlentities( $snippet[ 'input' ], ENT_COMPAT | ENT_HTML401, "UTF-8" ).'</span><br />';
+				}
+				/*else {
+					$transcript .= '<span class="command" id="command-'.$snippet[ 'inputcount' ].'"></span>';
+				}*/
 			}
 			else {
 				$transcript .= $snippet[ 'input' ]."\n";
@@ -75,8 +80,9 @@ function display_transcript( $db, $session, $options ) {
 
 		if( $snippet[ 'window' ] == 0 ) {
 			if( $html && $engine != 'Undum' ) {
+				if ( $output == ">\n" ) continue;
 				$gameText .= '<span class="'.$snippet[ 'styles' ].'">';
-				$gameText .= nl2br( str_replace( '  ', '&nbsp; ', str_replace( '  ', '&nbsp; ', $output ) ) );
+				$gameText .= nl2br( mb_ereg_replace( '  ', '&nbsp; ', mb_ereg_replace( '  ', '&nbsp; ', $output ) ) );
 				$gameText .= '</span>';
 			}
 			else {
@@ -87,7 +93,7 @@ function display_transcript( $db, $session, $options ) {
 		if( $snippet[ 'window' ] == 1 ) {
 			if( $html ) {
 				$statusLineText .= '<span class="'.$snippet[ 'styles' ].'">';
-				$statusLineText .= nl2br( str_replace( ' ', '&nbsp;', htmlentities( $output ) ) );
+				$statusLineText .= nl2br( mb_ereg_replace( ' ', '&nbsp;', htmlentities( $output, ENT_COMPAT | ENT_HTML401, "UTF-8" ) ) );
 				$statusLineText .= '</span>';
 			}
 			else {

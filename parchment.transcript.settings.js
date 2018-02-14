@@ -22,7 +22,7 @@ ifRecorder.saveUrl = "tools/server/save-sql.php";
  * If not locked, the player can play any game with this
  * installation by giving the story file in the URL.
  */
-parchment.options.lock_story = true;
+parchment.options.lock_story = false;
 
 
 /**

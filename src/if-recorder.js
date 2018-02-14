@@ -311,7 +311,7 @@ $( document ).bind(
 		} 
 	);
 
-$( document ).bind( 
+$( document ).on( 
 		'CharInput', 
 		function( command ) { 
 //			console.log( 'charcmd: '+command.toSource() );
@@ -323,17 +323,40 @@ $( document ).bind(
 
 // Sending main game texts to the recorder.
 // Status line is saved by the modified Console.renderHtml().
-$( document ).bind(
-		'TextOutput',
-		function( data ) {
-			if( data.output.window == 0 ) {
-			    ifRecorder.send( data.output.window, data.output.styles, data.output.text );
-			}
+$( document ).on(
+	'TextOutput',
+	function( data ) {
+		//console.log( data );
+		if ( typeof data.output.text !== 'undefined' )
+		{
+			//console.log( 'style: ' + data.output.props.class + ' | text: ' + data.output.text );
+			ifRecorder.send( 0, ( ( typeof data.output.props.class !== 'undefined' ) ? data.output.props.class : '' ), data.output.text );
 		}
+		/*if( data.output.window == 0 ) {
+			ifRecorder.send( data.output.window, data.output.styles, data.output.text );
+		}*/
+	}
+);
+
+$( document ).on(
+	'TextInput',
+	function( command ) {
+		//console.log( command );
+		//ifRecorder.command = command;
+		//ifRecorder.command.input = ( ( typeof command.input !== 'undefined' ) ? command.input : '' );
+		ifRecorder.inputcount++;
+	}
+);
+
+$( document ).on(
+	'test',
+	function( data ) {
+		console.log( data );
+	}
 );
 
 // Glk text output saving
-$( document ).bind(
+$( document ).on(
 		'GlkOutput',
 		function( data ) {
 			if( typeof data.output === 'undefined' ) {
@@ -347,10 +370,10 @@ $( document ).bind(
 						ifRecorder.output = "\n";
 						
 						if( typeof( data.output[ i ].text[ j ].content ) != 'undefined' ) {
-							for( var k = 0; k < data.output[ i ].text[ j ].content.size(); k += 2 ) {
+							for( var k = 0; k < data.output[ i ].text[ j ].content.length; k += 2 ) {
 								ifRecorder.styles = data.output[ i ].text[ j ].content[ k ];
 								ifRecorder.output = data.output[ i ].text[ j ].content[ k+1 ];
-								if( k == data.output[ i ].text[ j ].content.size() - 2 ) {
+								if( k == data.output[ i ].text[ j ].content.length - 2 ) {
 									ifRecorder.output += "\n";
 								}
 								ifRecorder.send( ifRecorder.window, ifRecorder.styles, ifRecorder.output, true );
@@ -381,7 +404,7 @@ $( document ).bind(
  * (There must be a better way to do this, but this works so it'll have to suffice.)
  */
 
-var firstTextOutputHandler = function( data ) {
+/*var firstTextOutputHandler = function( data ) {
 	Console.prototype.renderHtml = function() {
     var string = "";
     var currString = "";
@@ -416,7 +439,7 @@ var firstTextOutputHandler = function( data ) {
 	$( document ).unbind( 'TextOutput', firstTextOutputHandler );
 };
 
-$( document ).bind( 'TextOutput', firstTextOutputHandler );
+$( document ).bind( 'TextOutput', firstTextOutputHandler );*/
 
 }(jQuery));
 

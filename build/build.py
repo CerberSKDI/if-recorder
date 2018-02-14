@@ -1,76 +1,33 @@
-import os
-import glob
-import shutil
-from subprocess import call
+#!/usr/bin/env python
 
-# minify the library
-call([ 
-      "/usr/bin/java", 
-      "-jar", "../../closure/closure-compiler/compiler.jar", 
-      "--js", "../src/if-recorder.js", 
-      "--compilation_level=SIMPLE_OPTIMIZATIONS", 
-      "--js_output_file", "../lib/if-recorder.min.js"
-      ])
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-# create the Inform template
-releasedir = os.path.abspath( './release' );
-destination = os.path.abspath( '../inform7/Recording Parchment' )
+import sys
+import re
+import subprocess
 
-# location of Parchment main files
-files = ( glob.glob( os.path.abspath( "../../parchment/lib/*.min.js" ) ) )
-
-# css files
-files.extend( glob.glob( os.path.abspath( "../../parchment/src/quixe/media/*.css" ) ) )
-files.append( os.path.abspath( "../../parchment/parchment.css" ) )
-
-# add recorder files
-files.extend( glob.glob( os.path.abspath( "../lib/*.min.js" ) ) )
-
-# create the manifest file
-shutil.copy( '(manifest).txt.template', destination+'/(manifest).txt' )
-manifest = open( destination+'/(manifest).txt', 'a' )
-
-# copy library files over
-for source in files:
-    shutil.copy( source, destination )
-    manifest.write( os.path.basename( source ) +"\n" )
-
-# create zip files
-os.chdir( destination )
-os.chdir( '../' )
-
-call([
-      "zip",
-      "-rq",
-      releasedir+"/inform7-template.zip",
-      "Recording Parchment",
-      # exclude OS X's system files
-      "-x", '*.DS_Store*'
-    ])
+regex_debug = re.compile(b';;;.+$', re.M)
 
 
-# create tools zip
-os.chdir( '../' )
+def compress_source(target, srcls):
+    print('Writing', target)
+    with open(target, 'wb') as targetfl:
+        proc = subprocess.Popen([sys.executable, 'rjsmin.py'],
+                                stdin=subprocess.PIPE,
+                                stdout=targetfl)
+        for src in srcls:
+            with open(src, 'rb') as fl:
+                dat = fl.read()
+            dat = regex_debug.sub(b'', dat)
+            proc.stdin.write(dat)
+        proc.stdin.close()
+        ret = proc.wait()
+        if (ret):
+            raise Exception('Process result code %d' % (ret,))
 
-call([
-      "zip",
-      "-rq",
-      releasedir+"/if-recorder-tools.zip",
-      "tools",
-      # exclude OS X's system files
-      "-x", '*.DS_Store*'
-    ])
-
-# create main zip
-call([
-      "zip",
-      "-rq",
-      releasedir+"/if-recorder-client.zip",
-      "lib",
-      "index.html",
-      "parchment.transcript.settings.js",
-      "LICENSE",
-      "-x", '*.DS_Store*'
-    ])
-
-manifest.close()
+compress_source(
+    '../lib/if-recorder.min.js', [
+        '../src/if-recorder.js',
+        ])

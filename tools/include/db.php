@@ -25,10 +25,7 @@ try {
 	$db = new PDO( 
 		$dsn, 
 		$dbSettings[ 'username' ], 
-		$dbSettings[ 'password' ],  
-		array(
-	    	PDO::ATTR_PERSISTENT => true
-		)
+		$dbSettings[ 'password' ]
 	);
 	$db->query( "SET NAMES 'utf8'" );
 } catch (PDOException $e) {
